@@ -1,5 +1,4 @@
 import { handler } from './function1.mjs';
-import { expect } from 'chai';
 
 describe('function1 Lambda handler tests', () => {
   it('should add two numbers correctly', async () => {
@@ -12,7 +11,7 @@ describe('function1 Lambda handler tests', () => {
     
     const responseBody = JSON.parse(response.body);
 
-    expect(response.statusCode).to.equal(200);
-    expect(responseBody.result).to.equal(5);
+    expect(response.statusCode).toBe(200);
+    expect(responseBody.result).toBe(5);
   });
 });
