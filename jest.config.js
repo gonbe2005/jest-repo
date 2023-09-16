@@ -1,10 +1,8 @@
 module.exports = {
-    testEnvironment: 'node',
-    transform: {},
-    moduleNameMapper: {
-      '^.+\\.mjs$': 'babel-jest'
-    },
-    moduleFileExtensions: ['js', 'mjs'],
-    testMatch: ['**/?(*.)+(spec|test).mjs']
-  };
-  
+  testEnvironment: 'jest-environment-node',  // 'node'から'jest-environment-node'に変更
+  moduleFileExtensions: ['js', 'mjs'],
+  testMatch: ['**/?(*.)+(spec|test).mjs'],
+  transform: {
+    '^.+\\.mjs$': 'babel-jest'  // .mjsファイルをBabelでトランスパイルするように設定
+  }
+};

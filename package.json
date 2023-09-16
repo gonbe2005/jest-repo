@@ -4,28 +4,26 @@
     "description": "A brief description of your project",
     "main": "index.js",
     "scripts": {
-      "start": "node index.js",
-      "test": "jest"
+        "start": "node index.js",
+        "test": "jest"
     },
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/gonbe2005/jest-repo.git"
+        "type": "git",
+        "url": "git+https://github.com/gonbe2005/jest-repo.git"
     },
     "author": "tanaka-yuya",
     "license": "MIT",
     "bugs": {
-      "url": "https://github.com/gonbe2005/jest-repo/issues"
+        "url": "https://github.com/gonbe2005/jest-repo/issues"
     },
     "homepage": "https://github.com/gonbe2005/jest-repo#readme",
     "dependencies": {
-      "express": "^4.17.1"
+        "express": "^4.17.1"
     },
     "devDependencies": {
-      "jest": "^27.0.0"
-    },
-    "jest": {
-      "moduleFileExtensions": ["js", "mjs"],
-      "testMatch": ["**/?(*.)+(spec|test).mjs"]
+        "@babel/core": "^7.22.19",
+        "@babel/preset-env": "^7.22.15",
+        "babel-jest": "^29.7.0",
+        "jest": "^27.0.0"
     }
-  }
-  
+}
