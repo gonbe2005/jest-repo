@@ -1,6 +1,7 @@
-// function1.mjs
 import { DynamoDB } from 'aws-sdk';
-AWS.config.update({ region: 'ap-northeast-1' });
+
+// AWSリージョンの設定
+DynamoDB.config.update({ region: 'ap-northeast-1' });  // こちらのリージョンは例です。実際の使用リージョンに合わせて変更してください。
 
 const dynamo = new DynamoDB.DocumentClient();
 
@@ -38,8 +39,15 @@ export const returnBatteryNotification = async (event) => {
   // DynamoDBのテーブル名
   const tableName = "dev-smart-return";
 
-  // DynamoDBへのクエリ (実際の操作内容は仕様によります)
+  // DynamoDBへのクエリ
   const dbResponse = await fetchData(tableName, { uId });
+
+  if (!dbResponse.Item) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Failed to fetch data from DynamoDB" })
+    };
+  }
 
   // レスポンスの組み立て
   return {
@@ -48,9 +56,9 @@ export const returnBatteryNotification = async (event) => {
       "Content-Type": "application/json; charset=UTF-8"
     },
     body: JSON.stringify({
-      proCode: dbResponse.proCode,
-      batteryId: dbResponse.batteryId,
-      slotNo: dbResponse.slotNo,
+      proCode: dbResponse.Item.proCode,
+      batteryId: dbResponse.Item.batteryId,
+      slotNo: dbResponse.Item.slotNo,
       rDt: new Date().toISOString()
     })
   };
