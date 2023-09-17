@@ -1,0 +1,64 @@
+openapi: 3.0.0
+info:
+  title: バッテリー返却通知API
+  version: 1.0.0
+  description: バッテリー返却通知を行うAPI
+
+paths:
+  /return:
+    post:
+      summary: バッテリー返却通知
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uId:
+                  type: string
+                  description: ユニット ID
+                proCode:
+                  type: string
+                  description: プロダクト(orプロジェクト)コード
+                FelicaId:
+                  type: string
+                  description: Felicaカード番号やFelicaタッチされなかったときの番号
+                slotNo:
+                  type: number
+                  description: 充電ロッカースロット番号
+                batteryId:
+                  type: string
+                  description: バッテリー識別ID
+                retDt:
+                  type: string
+                  description: 返却処理日時
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json; charset=UTF-8:
+              schema:
+                type: object
+                properties:
+                  proCode:
+                    type: string
+                    description: プロダクト(orプロジェクト)コード
+                  batteryId:
+                    type: string
+                    description: バッテリー識別ID
+                  slotNo:
+                    type: number
+                    description: 充電ロッカースロット番号
+                  rDt:
+                    type: string
+                    description: 受信日時
+      security:
+        - api_key: []
+
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: x-api-key
+      in: header
