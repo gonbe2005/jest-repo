@@ -1,21 +1,23 @@
 import { returnBatteryNotification } from './function1.mjs';
 
-// DynamoDB.DocumentClientをモックする
+// 既存の jest.mock の中で DocumentClient の get メソッドのモックを取得します。
+const getMock = jest.fn().mockImplementation((params) => {
+  return {
+    promise: jest.fn().mockResolvedValue({
+      Item: {
+        proCode: "exampleProCode",
+        batteryId: "exampleBatteryId",
+        slotNo: 1
+      }
+    })
+  };
+});
+
 jest.mock('aws-sdk/clients/dynamodb', () => {
   return {
     DocumentClient: jest.fn().mockImplementation(() => {
       return {
-        get: jest.fn().mockImplementation((params) => {
-          return {
-            promise: jest.fn().mockResolvedValue({
-              Item: {
-                proCode: "exampleProCode",
-                batteryId: "exampleBatteryId",
-                slotNo: 1
-              }
-            })
-          };
-        })
+        get: getMock
       };
     })
   };
@@ -192,7 +194,7 @@ describe('バッテリー返却通知テスト', () => {
     expect.assertions(1);
 
     // DynamoDBのモックを上書きして、Itemが含まれていないレスポンスを返すようにする
-    require('aws-sdk/clients/dynamodb').DocumentClient.prototype.get.mockImplementationOnce((params) => {
+    getMock.mockImplementationOnce((params) => {
       return {
         promise: jest.fn().mockResolvedValue({})
       };
