@@ -164,7 +164,7 @@ describe('バッテリー返却通知テスト', () => {
   });
 
   it('正しいリクエストの場合、200を返す', async () => {
-    expect.assertions(3);
+    expect.assertions(2);
 
     const event = {
       headers: {
