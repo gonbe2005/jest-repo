@@ -180,35 +180,6 @@ describe('バッテリー返却通知テスト', () => {
       })
     };
 
-    it('DynamoDBからのデータが取得できない場合、500を返す', async () => {
-      expect.assertions(1);
-  
-      // DynamoDBのモックを上書きして、Itemが含まれていないレスポンスを返すようにする
-      require('aws-sdk/clients/dynamodb').DocumentClient.prototype.get.mockImplementationOnce((params) => {
-        return {
-          promise: jest.fn().mockResolvedValue({})
-        };
-      });
-  
-      const event = {
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": "exampleKey"
-        },
-        body: JSON.stringify({
-          uId: "exampleUId",
-          FelicaId: "exampleFelicaId",
-          slotNo: 1,
-          batteryId: "exampleBatteryId",
-          retDt: "exampleDate"
-        })
-      };
-  
-      const response = await returnBatteryNotification(event);
-      expect(response.statusCode).toBe(500);
-  });
-
-
     const response = await returnBatteryNotification(event);
     expect(response.statusCode).toBe(200);
     expect(JSON.parse(response.body)).toMatchObject({
@@ -217,4 +188,31 @@ describe('バッテリー返却通知テスト', () => {
       slotNo: 1
     });
   });
+  it('DynamoDBからのデータが取得できない場合、500を返す', async () => {
+    expect.assertions(1);
+
+    // DynamoDBのモックを上書きして、Itemが含まれていないレスポンスを返すようにする
+    require('aws-sdk/clients/dynamodb').DocumentClient.prototype.get.mockImplementationOnce((params) => {
+      return {
+        promise: jest.fn().mockResolvedValue({})
+      };
+    });
+
+    const event = {
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "exampleKey"
+      },
+      body: JSON.stringify({
+        uId: "exampleUId",
+        FelicaId: "exampleFelicaId",
+        slotNo: 1,
+        batteryId: "exampleBatteryId",
+        retDt: "exampleDate"
+      })
+    };
+
+    const response = await returnBatteryNotification(event);
+    expect(response.statusCode).toBe(500);
+});
 });
