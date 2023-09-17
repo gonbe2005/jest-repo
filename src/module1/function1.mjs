@@ -1,17 +1,10 @@
-export function add(a, b) {
-  return a + b;
-}
+import { DynamoDB } from 'aws-sdk';
 
-export const handler = async (event) => {
-  const { num1, num2 } = event;
-
-  if (num1 === null || num2 === null || num1 === undefined || num2 === undefined) {
-      throw new Error("Invalid input");
-  }
-
-  const result = add(num1, num2);
-  return {
-      statusCode: 200,
-      body: JSON.stringify({ result }),
+export const fetchData = async (tableName, key) => {
+  const dynamo = new DynamoDB.DocumentClient();
+  const params = {
+    TableName: tableName,
+    Key: key
   };
+  return dynamo.get(params).promise();
 };

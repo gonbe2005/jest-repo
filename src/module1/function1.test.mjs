@@ -1,55 +1,172 @@
-import { handler, add } from './function1.mjs';
+// function1.test.mjs
+import AWSMock from 'aws-sdk-mock';
+import AWS from 'aws-sdk';
+import { returnBatteryNotification } from './function1.mjs';
 
-describe('function1 handlerのテスト', () => {
-    it('2つの正の数の加算が正しく行われる', async () => {
-        const response = await handler({ num1: 5, num2: 3 });
-        expect(response.statusCode).toBe(200);
-        expect(JSON.parse(response.body).result).toBe(8);
+describe('バッテリー返却通知テスト', () => {
+  beforeEach(() => {
+    AWSMock.setSDKInstance(AWS);
+  });
+
+  afterEach(() => {
+    AWSMock.restore('DynamoDB.DocumentClient');
+  });
+
+  it('Content-Typeがapplication/jsonでない場合、400を返す', async () => {
+    const event = {
+      headers: {
+        "x-api-key": "exampleKey"
+      },
+      body: JSON.stringify({
+        uId: "exampleUId",
+        FelicaId: "exampleFelicaId",
+        slotNo: 1,
+        batteryId: "exampleBatteryId",
+        retDt: "exampleDate"
+      })
+    };
+
+    const response = await returnBatteryNotification(event);
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('x-api-keyが存在しない場合、400を返す', async () => {
+    const event = {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        uId: "exampleUId",
+        FelicaId: "exampleFelicaId",
+        slotNo: 1,
+        batteryId: "exampleBatteryId",
+        retDt: "exampleDate"
+      })
+    };
+
+    const response = await returnBatteryNotification(event);
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('uIdが存在しない場合、400を返す', async () => {
+    const event = {
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "exampleKey"
+      },
+      body: JSON.stringify({
+        FelicaId: "exampleFelicaId",
+        slotNo: 1,
+        batteryId: "exampleBatteryId",
+        retDt: "exampleDate"
+      })
+    };
+
+    const response = await returnBatteryNotification(event);
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('FelicaIdが存在しない場合、400を返す', async () => {
+    const event = {
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "exampleKey"
+      },
+      body: JSON.stringify({
+        uId: "exampleUId",
+        slotNo: 1,
+        batteryId: "exampleBatteryId",
+        retDt: "exampleDate"
+      })
+    };
+
+    const response = await returnBatteryNotification(event);
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('slotNoが存在しない場合、400を返す', async () => {
+    const event = {
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "exampleKey"
+      },
+      body: JSON.stringify({
+        uId: "exampleUId",
+        FelicaId: "exampleFelicaId",
+        batteryId: "exampleBatteryId",
+        retDt: "exampleDate"
+      })
+    };
+
+    const response = await returnBatteryNotification(event);
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('batteryIdが存在しない場合、400を返す', async () => {
+    const event = {
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "exampleKey"
+      },
+      body: JSON.stringify({
+        uId: "exampleUId",
+        FelicaId: "exampleFelicaId",
+        slotNo: 1,
+        retDt: "exampleDate"
+      })
+    };
+
+    const response = await returnBatteryNotification(event);
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('retDtが存在しない場合、400を返す', async () => {
+    const event = {
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "exampleKey"
+      },
+      body: JSON.stringify({
+        uId: "exampleUId",
+        FelicaId: "exampleFelicaId",
+        slotNo: 1,
+        batteryId: "exampleBatteryId"
+      })
+    };
+
+    const response = await returnBatteryNotification(event);
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('正しいリクエストの場合、200を返す', async () => {
+    AWSMock.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+      callback(null, {
+        proCode: "exampleProCode",
+        batteryId: "exampleBatteryId",
+        slotNo: 1
+      });
     });
 
-    it('負の数と正の数の加算が正しく行われる', async () => {
-        const response = await handler({ num1: -5, num2: 3 });
-        expect(response.statusCode).toBe(200);
-        expect(JSON.parse(response.body).result).toBe(-2);
-    });
+    const event = {
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "exampleKey"
+      },
+      body: JSON.stringify({
+        uId: "exampleUId",
+        FelicaId: "exampleFelicaId",
+        slotNo: 1,
+        batteryId: "exampleBatteryId",
+        retDt: "exampleDate"
+      })
+    };
 
-    it('正の数と負の数の加算が正しく行われる', async () => {
-        const response = await handler({ num1: 5, num2: -3 });
-        expect(response.statusCode).toBe(200);
-        expect(JSON.parse(response.body).result).toBe(2);
+    const response = await returnBatteryNotification(event);
+    expect(response.statusCode).toBe(200);
+    expect(JSON.parse(response.body)).toMatchObject({
+      proCode: "exampleProCode",
+      batteryId: "exampleBatteryId",
+      slotNo: 1
     });
-
-    it('2つの負の数の加算が正しく行われる', async () => {
-        const response = await handler({ num1: -5, num2: -3 });
-        expect(response.statusCode).toBe(200);
-        expect(JSON.parse(response.body).result).toBe(-8);
-    });
-
-    it('num1がゼロの場合の処理が正しく行われる', async () => {
-        const response = await handler({ num1: 0, num2: 3 });
-        expect(response.statusCode).toBe(200);
-        expect(JSON.parse(response.body).result).toBe(3);
-    });
-
-    it('num2がゼロの場合の処理が正しく行われる', async () => {
-        const response = await handler({ num1: 5, num2: 0 });
-        expect(response.statusCode).toBe(200);
-        expect(JSON.parse(response.body).result).toBe(5);
-    });
-
-    it('num1がnullの場合の処理', async () => {
-        await expect(handler({ num1: null, num2: 3 })).rejects.toThrow();
-    });
-
-    it('num2がnullの場合の処理', async () => {
-        await expect(handler({ num1: 5, num2: null })).rejects.toThrow();
-    });
-
-    it('num1がundefinedの場合の処理', async () => {
-        await expect(handler({ num2: 3 })).rejects.toThrow();
-    });
-
-    it('num2がundefinedの場合の処理', async () => {
-        await expect(handler({ num1: 5 })).rejects.toThrow();
-    });
+  });
 });
