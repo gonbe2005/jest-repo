@@ -1,19 +1,19 @@
 import { returnBatteryNotification } from './function1.mjs';
 
 // 既存の jest.mock の中で DocumentClient の get メソッドのモックを取得します。
-const getMock = jest.fn().mockImplementation((params) => {
-  return {
-    promise: jest.fn().mockResolvedValue({
-      Item: {
-        proCode: "exampleProCode",
-        batteryId: "exampleBatteryId",
-        slotNo: 1
-      }
-    })
-  };
-});
-
 jest.mock('aws-sdk/clients/dynamodb', () => {
+  const getMock = jest.fn().mockImplementation((params) => {
+    return {
+      promise: jest.fn().mockResolvedValue({
+        Item: {
+          proCode: "exampleProCode",
+          batteryId: "exampleBatteryId",
+          slotNo: 1
+        }
+      })
+    };
+  });
+
   return {
     DocumentClient: jest.fn().mockImplementation(() => {
       return {
