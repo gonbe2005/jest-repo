@@ -1,9 +1,9 @@
-// function1.test.mjs
 import AWSMock from 'aws-sdk-mock';
 import AWS from 'aws-sdk';
 import { returnBatteryNotification } from './function1.mjs';
 
 describe('バッテリー返却通知テスト', () => {
+  
   beforeEach(() => {
     AWSMock.setSDKInstance(AWS);
   });
@@ -13,6 +13,8 @@ describe('バッテリー返却通知テスト', () => {
   });
 
   it('Content-Typeがapplication/jsonでない場合、400を返す', async () => {
+    expect.assertions(1);
+
     const event = {
       headers: {
         "x-api-key": "exampleKey"
@@ -31,6 +33,8 @@ describe('バッテリー返却通知テスト', () => {
   });
 
   it('x-api-keyが存在しない場合、400を返す', async () => {
+    expect.assertions(1);
+
     const event = {
       headers: {
         "Content-Type": "application/json"
@@ -49,6 +53,8 @@ describe('バッテリー返却通知テスト', () => {
   });
 
   it('uIdが存在しない場合、400を返す', async () => {
+    expect.assertions(1);
+
     const event = {
       headers: {
         "Content-Type": "application/json",
@@ -67,6 +73,8 @@ describe('バッテリー返却通知テスト', () => {
   });
 
   it('FelicaIdが存在しない場合、400を返す', async () => {
+    expect.assertions(1);
+
     const event = {
       headers: {
         "Content-Type": "application/json",
@@ -85,6 +93,8 @@ describe('バッテリー返却通知テスト', () => {
   });
 
   it('slotNoが存在しない場合、400を返す', async () => {
+    expect.assertions(1);
+
     const event = {
       headers: {
         "Content-Type": "application/json",
@@ -103,6 +113,8 @@ describe('バッテリー返却通知テスト', () => {
   });
 
   it('batteryIdが存在しない場合、400を返す', async () => {
+    expect.assertions(1);
+
     const event = {
       headers: {
         "Content-Type": "application/json",
@@ -121,6 +133,8 @@ describe('バッテリー返却通知テスト', () => {
   });
 
   it('retDtが存在しない場合、400を返す', async () => {
+    expect.assertions(1);
+
     const event = {
       headers: {
         "Content-Type": "application/json",
@@ -139,6 +153,8 @@ describe('バッテリー返却通知テスト', () => {
   });
 
   it('正しいリクエストの場合、200を返す', async () => {
+    expect.assertions(3);
+
     AWSMock.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
       callback(null, {
         proCode: "exampleProCode",
