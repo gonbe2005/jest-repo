@@ -179,6 +179,30 @@ describe('バッテリー返却通知テスト', () => {
         retDt: "exampleDate"
       })
     };
+    it('DynamoDBからのデータが取得できない場合、500を返す', async () => {
+      expect.assertions(1);
+  
+      AWSMock.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+        callback(null, {});  // Itemが含まれていないレスポンスをモック
+      });
+  
+      const event = {
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": "exampleKey"
+        },
+        body: JSON.stringify({
+          uId: "exampleUId",
+          FelicaId: "exampleFelicaId",
+          slotNo: 1,
+          batteryId: "exampleBatteryId",
+          retDt: "exampleDate"
+        })
+      };
+  
+      const response = await returnBatteryNotification(event);
+      expect(response.statusCode).toBe(500);
+  });
 
     const response = await returnBatteryNotification(event);
     expect(response.statusCode).toBe(200);
