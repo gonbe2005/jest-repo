@@ -1,4 +1,5 @@
 import DynamoDB from 'aws-sdk/clients/dynamodb';
+AWS.config.update({ region: 'ap-northeast-1' });
 const dynamo = new DynamoDB.DocumentClient();
 
 // DynamoDBからデータを取得する関数
