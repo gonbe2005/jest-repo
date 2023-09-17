@@ -193,8 +193,12 @@ describe('バッテリー返却通知テスト', () => {
   it('DynamoDBからのデータが取得できない場合、500を返す', async () => {
     expect.assertions(1);
 
+    // モックをリセット
+    jest.resetModules();
+
     // DynamoDBのモックを上書きして、Itemが含まれていないレスポンスを返すようにする
-    getMock.mockImplementationOnce((params) => {
+    const dynamodb = jest.requireActual('aws-sdk/clients/dynamodb');
+    dynamodb.DocumentClient.prototype.get = jest.fn().mockImplementation((params) => {
       return {
         promise: jest.fn().mockResolvedValue({})
       };
