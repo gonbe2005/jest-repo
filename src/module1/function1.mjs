@@ -1,6 +1,5 @@
-import AWS from 'aws-sdk';
-AWS.config.update({ region: 'ap-northeast-1' });
-const dynamo = new AWS.DynamoDB.DocumentClient();
+import DynamoDB from 'aws-sdk/clients/dynamodb';
+const dynamo = new DynamoDB.DocumentClient();
 
 // DynamoDBからデータを取得する関数
 const fetchData = async (tableName, key) => {
