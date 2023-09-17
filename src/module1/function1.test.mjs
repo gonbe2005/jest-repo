@@ -1,29 +1,38 @@
 import { returnBatteryNotification } from './function1.mjs';
 
-// DocumentClient の get メソッドのモックを定義
-const getMock = jest.fn().mockImplementation((params) => {
-  return {
-    promise: jest.fn().mockResolvedValue({
-      Item: {
-        proCode: "exampleProCode",
-        batteryId: "exampleBatteryId",
-        slotNo: 1
-      }
-    })
-  };
-});
-
+// AWS DynamoDBのモック
 jest.mock('aws-sdk/clients/dynamodb', () => {
+  // getメソッドの初期実装をここで設定
+  const initialGetMock = jest.fn().mockImplementation((params) => {
+    return {
+      promise: jest.fn().mockResolvedValue({
+        Item: {
+          proCode: "exampleProCode",
+          batteryId: "exampleBatteryId",
+          slotNo: 1
+        }
+      })
+    };
+  });
+
   return {
     DocumentClient: jest.fn().mockImplementation(() => {
       return {
-        get: getMock
+        get: initialGetMock
       };
-    })
+    }),
+    __getMock: initialGetMock // テストからアクセスできるように、モックを公開
   };
 });
 
+// テストケース
 describe('バッテリー返却通知テスト', () => {
+  let getMock; // 各テストで使用するモック関数
+
+  beforeEach(() => {
+    const dynamodbMock = jest.requireMock('aws-sdk/clients/dynamodb');
+    getMock = dynamodbMock.__getMock; // モック関数を取得
+  });
 
   it('Content-Typeがapplication/jsonでない場合、400を返す', async () => {
     expect.assertions(1);
@@ -192,14 +201,14 @@ describe('バッテリー返却通知テスト', () => {
   });
   it('DynamoDBからのデータが取得できない場合、500を返す', async () => {
     expect.assertions(1);
-  
+
     // モックの動作を上書きして、Itemが含まれていないレスポンスを返すように設定
     getMock.mockImplementationOnce((params) => {
       return {
         promise: jest.fn().mockResolvedValue({})
       };
     });
-  
+
     const event = {
       headers: {
         "Content-Type": "application/json",
@@ -213,7 +222,7 @@ describe('バッテリー返却通知テスト', () => {
         retDt: "exampleDate"
       })
     };
-  
+
     const response = await returnBatteryNotification(event);
     expect(response.statusCode).toBe(500);
   });
