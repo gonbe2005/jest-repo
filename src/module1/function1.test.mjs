@@ -1,19 +1,19 @@
 import { returnBatteryNotification } from './function1.mjs';
 
-// 既存の jest.mock の中で DocumentClient の get メソッドのモックを取得します。
-jest.mock('aws-sdk/clients/dynamodb', () => {
-  const getMock = jest.fn().mockImplementation((params) => {
-    return {
-      promise: jest.fn().mockResolvedValue({
-        Item: {
-          proCode: "exampleProCode",
-          batteryId: "exampleBatteryId",
-          slotNo: 1
-        }
-      })
-    };
-  });
+// DocumentClient の get メソッドのモックを定義
+const getMock = jest.fn().mockImplementation((params) => {
+  return {
+    promise: jest.fn().mockResolvedValue({
+      Item: {
+        proCode: "exampleProCode",
+        batteryId: "exampleBatteryId",
+        slotNo: 1
+      }
+    })
+  };
+});
 
+jest.mock('aws-sdk/clients/dynamodb', () => {
   return {
     DocumentClient: jest.fn().mockImplementation(() => {
       return {
@@ -192,18 +192,14 @@ describe('バッテリー返却通知テスト', () => {
   });
   it('DynamoDBからのデータが取得できない場合、500を返す', async () => {
     expect.assertions(1);
-
-    // モックをリセット
-    jest.resetModules();
-
-    // DynamoDBのモックを上書きして、Itemが含まれていないレスポンスを返すようにする
-    const dynamodb = jest.requireActual('aws-sdk/clients/dynamodb');
-    dynamodb.DocumentClient.prototype.get = jest.fn().mockImplementation((params) => {
+  
+    // モックの動作を上書きして、Itemが含まれていないレスポンスを返すように設定
+    getMock.mockImplementationOnce((params) => {
       return {
         promise: jest.fn().mockResolvedValue({})
       };
     });
-
+  
     const event = {
       headers: {
         "Content-Type": "application/json",
@@ -217,8 +213,8 @@ describe('バッテリー返却通知テスト', () => {
         retDt: "exampleDate"
       })
     };
-
+  
     const response = await returnBatteryNotification(event);
     expect(response.statusCode).toBe(500);
-});
+  });
 });
