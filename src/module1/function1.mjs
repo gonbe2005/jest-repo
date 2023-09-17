@@ -1,5 +1,6 @@
 // function1.mjs
 import { DynamoDB } from 'aws-sdk';
+AWS.config.update({ region: 'ap-northeast-1' });
 
 const dynamo = new DynamoDB.DocumentClient();
 
