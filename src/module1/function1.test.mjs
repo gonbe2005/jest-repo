@@ -1,16 +1,25 @@
-import AWSMock from 'aws-sdk-mock';
-import AWS from 'aws-sdk';
 import { returnBatteryNotification } from './function1.mjs';
 
-describe('バッテリー返却通知テスト', () => {
-  
-  beforeEach(() => {
-    AWSMock.setSDKInstance(AWS);
-  });
+// DynamoDB.DocumentClientをモックする
+jest.mock('aws-sdk/clients/dynamodb', () => {
+  return {
+    DocumentClient: jest.fn().mockImplementation(() => {
+      return {
+        get: jest.fn().mockImplementation((params, callback) => {
+          callback(null, {
+            Item: {
+              proCode: "exampleProCode",
+              batteryId: "exampleBatteryId",
+              slotNo: 1
+            }
+          });
+        })
+      };
+    })
+  };
+});
 
-  afterEach(() => {
-    AWSMock.restore('DynamoDB.DocumentClient');
-  });
+describe('バッテリー返却通知テスト', () => {
 
   it('Content-Typeがapplication/jsonでない場合、400を返す', async () => {
     expect.assertions(1);
@@ -154,14 +163,6 @@ describe('バッテリー返却通知テスト', () => {
 
   it('正しいリクエストの場合、200を返す', async () => {
     expect.assertions(3);
-
-    AWSMock.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
-      callback(null, {
-        proCode: "exampleProCode",
-        batteryId: "exampleBatteryId",
-        slotNo: 1
-      });
-    });
 
     const event = {
       headers: {
