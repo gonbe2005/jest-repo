@@ -5,14 +5,16 @@ jest.mock('aws-sdk/clients/dynamodb', () => {
   return {
     DocumentClient: jest.fn().mockImplementation(() => {
       return {
-        get: jest.fn().mockImplementation((params, callback) => {
-          callback(null, {
-            Item: {
-              proCode: "exampleProCode",
-              batteryId: "exampleBatteryId",
-              slotNo: 1
-            }
-          });
+        get: jest.fn().mockImplementation((params) => {
+          return {
+            promise: jest.fn().mockResolvedValue({
+              Item: {
+                proCode: "exampleProCode",
+                batteryId: "exampleBatteryId",
+                slotNo: 1
+              }
+            })
+          };
         })
       };
     })
