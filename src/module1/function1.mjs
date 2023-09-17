@@ -1,9 +1,6 @@
-import { DynamoDB } from 'aws-sdk';
-
-// AWSリージョンの設定
-DynamoDB.config.update({ region: 'ap-northeast-1' });  // こちらのリージョンは例です。実際の使用リージョンに合わせて変更してください。
-
-const dynamo = new DynamoDB.DocumentClient();
+import AWS from 'aws-sdk';
+AWS.config.update({ region: 'ap-northeast-1' });
+const dynamo = new AWS.DynamoDB.DocumentClient();
 
 // DynamoDBからデータを取得する関数
 const fetchData = async (tableName, key) => {
