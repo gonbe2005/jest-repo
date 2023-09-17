@@ -1,4 +1,5 @@
-module.exports = {
+// jest.config.js
+export default {
   testEnvironment: 'jest-environment-node',  
   moduleFileExtensions: ['js', 'mjs'],
   testMatch: ['**/?(*.)+(spec|test).mjs'],
