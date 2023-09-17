@@ -1,4 +1,4 @@
-import { handler } from './function1.mjs';
+import { handler, add } from './function1.mjs';
 
 describe('function1 handlerのテスト', () => {
     it('2つの正の数の加算が正しく行われる', async () => {
