@@ -25,3 +25,4 @@ jobs:
         # 応答に期待するキーが含まれているかをチェックする
         echo "$response" | grep '"userId"'
         echo "$response" | grep '"rDt"'
+        
