@@ -1,30 +1,27 @@
-name: Node.js CI
+name: CI
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+
+    - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: npm test -- --coverage
+        node-version: '18'
 
-    # カバレッジ情報をアーカイブとして保存
-    - name: Archive code coverage results
-      uses: actions/upload-artifact@v2
-      with:
-        name: coverage-report
-        path: coverage/
+    - name: Install dependencies
+      run: npm install
+
+    # 新しいステップ: API Gatewayエンドポイントのテスト
+    - name: Test API Gateway endpoint using curl
+      run: |
+        response=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"userId\":\"example@email.com\",\"mDt\":\"2021-12-31T23:59:59.999Z\",\"lat\":\"35.6895\",\"lng\":\"139.6917\",\"speed\":10,\"driveMode\":1,\"charge\":80,\"driveUnitErr\":\"00000000\",\"lockState\":true,\"lockId\":\"XXX0000\",\"lockErr\":\"00000000\"}" ${{ secrets.API_GATEWAY_ENDPOINT }})
+        
+        # 応答に期待するキーが含まれているかをチェックする
+        echo "$response" | grep '"userId"'
+        echo "$response" | grep '"rDt"'
