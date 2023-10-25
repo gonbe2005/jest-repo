@@ -1,0 +1,24 @@
+.
+├── README.md
+├── infra
+└── lambda
+    ├── package-lock.json
+    ├── package.json
+    ├── src
+    │   ├── functions
+    │   │   ├── lambda1
+    │   │   │   ├── __test__
+    │   │   │   │   └── index.test.ts
+    │   │   │   └── index.ts
+    │   │   └── lambda2
+    │   │       ├── __test__
+    │   │       │   └── index.test.ts
+    │   │       └── index.ts
+    │   └── lib
+    │       ├── __test__
+    │       │   └── common.test.ts
+    │       └── common.ts
+    ├── tsconfig.json
+    └── webpack.config.js
+
+11 directories, 11 files
