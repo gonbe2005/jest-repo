@@ -1,7 +1,10 @@
 name: CI
 
-on: [push]
-
+on:
+  workflow_run:
+    workflows: ["CD"]  # CDという名前のworkflowの結果をトリガーとする
+    types:
+      - completed  # CD workflowが完了したときにトリガー
 jobs:
   build:
     runs-on: ubuntu-latest

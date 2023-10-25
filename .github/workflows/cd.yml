@@ -1,0 +1,19 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - release/CL-150  # release/CL-150ブランチへのpushをトリガーとする
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Run deploy script
+      run: |
+        cd SleekScale-Server/infra/terraform
+        bash deploy.sh 637190323689 ap-northeast-3 dev
+
