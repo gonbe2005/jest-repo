@@ -1,8 +1,8 @@
 
 provider "aws" {
-  region = var.region
-  access_key = var.AWS_ACCESS_KEY_ID
-  secret_key = var.AWS_SECRET_ACCESS_KEY
+  region      = "ap-northeast-3"
+  access_key  = getenv("AWS_ACCESS_KEY_ID")
+  secret_key  = getenv("AWS_SECRET_ACCESS_KEY")
 }
 
 module "api_gateway" {
