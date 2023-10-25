@@ -2,7 +2,7 @@ name: CI
 
 on:
   workflow_run:
-    workflows: ["CD"]  # CDという名前のworkflowの結果をトリガーとする
+    workflows: ["CICD"]  # CICDという名前のworkflowの結果をトリガーとする
     types:
       - completed  # CD workflowが完了したときにトリガー
 jobs:
