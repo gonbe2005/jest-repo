@@ -21,9 +21,6 @@ jobs:
         cd infra/terraform
         bash deploy.sh 637190323689 ap-northeast-3 dev
 
-    - name: Wait for a moment
-      run: sleep 120  # 120秒待機
-
     - name: Extract API Gateway endpoint URL from terraform.tfstate
       run: |
         base_url=$(jq -r '.resources[] | select(.type=="aws_api_gateway_deployment") | .instances[0].attributes.invoke_url' infra/terraform/terraform.tfstate)
@@ -63,6 +60,7 @@ jobs:
         response=$(curl -X PUT $endpoint_url -H "Content-Type: application/json; charset=UTF-8" -d "{\"userId\":\"example@email.com\",\"mDt\":\"2021-12-31T23:59:59.999Z\",\"lat\":\"35.6895\",\"lng\":\"139.6917\",\"speed\":10,\"driveMode\":1,\"charge\":80,\"driveUnitErr\":\"00000000\",\"lockState\":true,\"lockId\":\"XXX0000\",\"lockErr\":\"00000000\"}")
         
         # 応答に期待するキーが含まれているかをチェックする
+        echo "$response"
         echo "$response" | grep '"userId"'
         echo "$response" | grep '"rDt"'
 
