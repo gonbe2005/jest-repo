@@ -5,24 +5,7 @@
     "description": "A brief description of your project",
     "main": "index.js",
     "scripts": {
-        "start": "node app.mjs",
-        "test": "jest"
+        "start": "node app.mjs"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/gonbe2005/jest-repo.git"
-    },
-    "author": "tanaka-yuya",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/gonbe2005/jest-repo/issues"
-    },
-    "homepage": "https://github.com/gonbe2005/jest-repo#readme",
-    "devDependencies": {
-        "@babel/core": "^7.22.19",
-        "@babel/preset-env": "^7.22.15",
-        "aws-sdk-mock": "^5.8.0",
-        "babel-jest": "^29.7.0",
-        "jest": "^27.0.0"
-    }
+    "devDependencies": {}
 }

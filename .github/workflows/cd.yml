@@ -11,16 +11,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set environment variables
-      run: |
-        echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
-        echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
-
-    - name: Run deploy script
-      run: |
-        cd infra/terraform
-        bash deploy.sh 637190323689 ap-northeast-3 dev
-
     - name: Extract API Gateway endpoint URL from terraform.tfstate
       run: |
         base_url=$(jq -r '.resources[] | select(.type=="aws_api_gateway_deployment") | .instances[0].attributes.invoke_url' infra/terraform/terraform.tfstate)
@@ -28,21 +18,23 @@ jobs:
         endpoint_url="${base_url}/${path_part}"
         echo $endpoint_url > endpoint.txt
 
+    - name: Upload endpoint.txt as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: endpoint-url
+        path: endpoint.txt
+
   test:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
+    - name: Download endpoint.txt artifact
+      uses: actions/download-artifact@v2
       with:
-        node-version: '18'
+        name: endpoint-url
 
-    - name: Install dependencies
-      run: npm install
-
-    # API Gatewayエンドポイントのテスト
     - name: Test API Gateway endpoint using curl
       run: |
         endpoint_url=$(cat endpoint.txt)
