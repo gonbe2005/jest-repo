@@ -11,25 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set environment variables
-      run: |
-        echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
-        echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
-
     - name: Run deploy script
       run: |
         cd infra/terraform
         bash deploy.sh 637190323689 ap-northeast-3 dev
 
-    - name: Get API Gateway endpoint URL
-      run: |
-        endpoint_url=$(terraform output api_gateway_endpoint)
-        echo $endpoint_url > endpoint.txt
+    - name: Fetch API Gateway endpoint
+      id: fetch_endpoint
+      run: echo "::set-output name=url::$(terraform output api_gateway_endpoint_url)"
 
     - name: Upload endpoint URL as artifact
       uses: actions/upload-artifact@v2
       with:
         name: endpoint-url
-        path: endpoint.txt
-
+        path: ${{ steps.fetch_endpoint.outputs.url }}
 
