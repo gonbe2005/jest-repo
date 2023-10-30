@@ -21,24 +21,18 @@ jobs:
         cd infra/terraform
         bash deploy.sh 637190323689 ap-northeast-3 dev
 
-    - name: Wait for a moment
-      run: sleep 30  # 30秒待機
-
-    - name: Get API Gateway endpoint URL and save to endpoint.txt
-      run: |
-        cd infra/terraform
-        endpoint_url=$(terraform output api_gateway_endpoint)
-        echo $endpoint_url > endpoint.txt
-        cat endpoint.txt
+    - name: Extract API Gateway endpoint URL from terraform.tfstate
+    run: |
+      base_url=$(jq -r '.resources[] | select(.type=="aws_api_gateway_deployment") | .instances[0].attributes.invoke_url' terraform.tfstate)
+      path_part=$(jq -r '.resources[] | select(.type=="aws_api_gateway_resource") | .instances[0].attributes.path_part' terraform.tfstate)
+      endpoint_url="${base_url}/${path_part}"
+      echo $endpoint_url > endpoint.txt
 
   test:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/download-artifact@v2
-      with:
-        name: endpoint-url
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
