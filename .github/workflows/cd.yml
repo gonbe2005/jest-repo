@@ -26,17 +26,10 @@ jobs:
 
     - name: Get API Gateway endpoint URL and save to endpoint.txt
       run: |
+        cd infra/terraform
         endpoint_url=$(terraform output api_gateway_endpoint)
         echo $endpoint_url > endpoint.txt
-
-    - name: Upload endpoint URL as artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: endpoint-url
-        path: endpoint.txt
-
-    - name: Check the content of endpoint.txt
-      run: cat endpoint.txt
+        cat endpoint.txt
 
   test:
     needs: deploy
