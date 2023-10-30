@@ -21,6 +21,9 @@ jobs:
         cd infra/terraform
         bash deploy.sh 637190323689 ap-northeast-3 dev
 
+    - name: Wait for a moment
+      run: sleep 30  # 30秒待機
+
     - name: Extract API Gateway endpoint URL from terraform.tfstate
       run: |
         base_url=$(jq -r '.resources[] | select(.type=="aws_api_gateway_deployment") | .instances[0].attributes.invoke_url' infra/terraform/terraform.tfstate)
