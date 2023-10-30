@@ -32,6 +32,9 @@ jobs:
         name: endpoint-url
         path: endpoint.txt
 
+    - name: Check the content of endpoint.txt
+      run: cat endpoint.txt
+
   test:
     needs: deploy
     runs-on: ubuntu-latest
