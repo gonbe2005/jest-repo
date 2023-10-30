@@ -24,7 +24,7 @@ jobs:
     - name: Wait for a moment
       run: sleep 30  # 30秒待機
 
-    - name: Get API Gateway endpoint URL
+    - name: Get API Gateway endpoint URL and save to endpoint.txt
       run: |
         endpoint_url=$(terraform output api_gateway_endpoint)
         echo $endpoint_url > endpoint.txt
