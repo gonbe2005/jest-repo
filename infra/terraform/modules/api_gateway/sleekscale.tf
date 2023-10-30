@@ -127,3 +127,8 @@ resource "aws_api_gateway_method_response" "dynamo_method_responses" {
   }
   depends_on = [aws_api_gateway_method.dynamo_methods]
 }
+
+output "api_gateway_endpoint" {
+  value       = aws_api_gateway_deployment.sleekscale_deployment.invoke_url
+  description = "The URL of the deployed API Gateway"
+}

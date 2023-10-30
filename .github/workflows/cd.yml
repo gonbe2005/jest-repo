@@ -3,7 +3,7 @@ name: CD
 on:
   push:
     branches:
-      - release/CL-150  # release/CL-150ブランチへのpushをトリガーとする
+      - release/CL-150
 
 jobs:
   deploy:
@@ -20,4 +20,16 @@ jobs:
       run: |
         cd infra/terraform
         bash deploy.sh 637190323689 ap-northeast-3 dev
+
+    - name: Get API Gateway endpoint URL
+      run: |
+        endpoint_url=$(terraform output api_gateway_endpoint)
+        echo $endpoint_url > endpoint.txt
+
+    - name: Upload endpoint URL as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: endpoint-url
+        path: endpoint.txt
+
 

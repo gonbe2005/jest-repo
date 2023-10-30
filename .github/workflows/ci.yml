@@ -2,15 +2,20 @@ name: CI
 
 on:
   workflow_run:
-    workflows: ["CD"]  # CDという名前のworkflowの結果をトリガーとする
+    workflows: ["CD"]
     types:
-      - completed  # CD workflowが完了したときにトリガー
+      - completed
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
+
+    - name: Download endpoint URL artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: endpoint-url
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
@@ -20,12 +25,12 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    # 新しいステップ: API Gatewayエンドポイントのテスト
     - name: Test API Gateway endpoint using curl
       run: |
-        response=$(curl -X PUT ${{ secrets.API_GATEWAY_ENDPOINT }} -H "Content-Type: application/json; charset=UTF-8" -d "{\"userId\":\"example@email.com\",\"mDt\":\"2021-12-31T23:59:59.999Z\",\"lat\":\"35.6895\",\"lng\":\"139.6917\",\"speed\":10,\"driveMode\":1,\"charge\":80,\"driveUnitErr\":\"00000000\",\"lockState\":true,\"lockId\":\"XXX0000\",\"lockErr\":\"00000000\"}")
+        endpoint_url=$(cat endpoint.txt)
+        response=$(curl -X PUT $endpoint_url -H "Content-Type: application/json; charset=UTF-8" -d "{\"userId\":\"example@email.com\",\"mDt\":\"2021-12-31T23:59:59.999Z\",\"lat\":\"35.6895\",\"lng\":\"139.6917\",\"speed\":10,\"driveMode\":1,\"charge\":80,\"driveUnitErr\":\"00000000\",\"lockState\":true,\"lockId\":\"XXX0000\",\"lockErr\":\"00000000\"}")
         
         # 応答に期待するキーが含まれているかをチェックする
         echo "$response" | grep '"userId"'
         echo "$response" | grep '"rDt"'
-        
+
