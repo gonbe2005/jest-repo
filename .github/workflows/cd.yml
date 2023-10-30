@@ -21,6 +21,9 @@ jobs:
         cd infra/terraform
         bash deploy.sh 637190323689 ap-northeast-3 dev
 
+    - name: Wait for a moment
+      run: sleep 30  # 30秒待機
+
     - name: Get API Gateway endpoint URL
       run: |
         endpoint_url=$(terraform output api_gateway_endpoint)
