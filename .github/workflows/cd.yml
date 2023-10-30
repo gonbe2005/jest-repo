@@ -55,13 +55,14 @@ jobs:
 
     - name: Test API Gateway endpoint using curl
       run: |
-         endpoint_url=$(cat endpoint.txt)
-         response=$(curl -X PUT $endpoint_url -H "Content-Type: application/json; charset=UTF-8" -d "{\"userId\":\"example@email.com\",\"mDt\":\"2021-12-31T23:59:59.999Z\",\"lat\":\"35.6895\",\"lng\":\"139.6917\",\"speed\":10,\"driveMode\":1,\"charge\":80,\"driveUnitErr\":\"00000000\",\"lockState\":true,\"lockId\":\"XXX0000\",\"lockErr\":\"00000000\"}")
-    
-      if [ $? -ne 0 ]; then
-        echo "curl command failed!"
-        exit 1
-      else
-        echo "curl command succeeded!"
-        echo "Response: $response"
-      fi
+        endpoint_url=$(cat endpoint.txt)
+        response=$(curl -X PUT $endpoint_url -H "Content-Type: application/json; charset=UTF-8" -d "{\"userId\":\"example@email.com\",\"mDt\":\"2021-12-31T23:59:59.999Z\",\"lat\":\"35.6895\",\"lng\":\"139.6917\",\"speed\":10,\"driveMode\":1,\"charge\":80,\"driveUnitErr\":\"00000000\",\"lockState\":true,\"lockId\":\"XXX0000\",\"lockErr\":\"00000000\"}")
+        
+        if [ $? -ne 0 ]; then
+          echo "curl command failed!"
+          exit 1
+        else
+          echo "curl command succeeded!"
+          echo "Response: $response"
+        fi
+
