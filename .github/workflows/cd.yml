@@ -23,8 +23,8 @@ jobs:
 
     - name: Extract API Gateway endpoint URL from terraform.tfstate
       run: |
-        base_url=$(jq -r '.resources[] | select(.type=="aws_api_gateway_deployment") | .instances[0].attributes.invoke_url' terraform.tfstate)
-        path_part=$(jq -r '.resources[] | select(.type=="aws_api_gateway_resource") | .instances[0].attributes.path_part' terraform.tfstate)
+        base_url=$(jq -r '.resources[] | select(.type=="aws_api_gateway_deployment") | .instances[0].attributes.invoke_url' infra/terraform/terraform.tfstate)
+        path_part=$(jq -r '.resources[] | select(.type=="aws_api_gateway_resource") | .instances[0].attributes.path_part' infra/terraform/terraform.tfstate)
         endpoint_url="${base_url}/${path_part}"
         echo $endpoint_url > endpoint.txt
 
