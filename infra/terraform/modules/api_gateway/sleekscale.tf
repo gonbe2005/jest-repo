@@ -94,7 +94,7 @@ resource "aws_api_gateway_deployment" "rest_deployment" {
 }
 
 resource "aws_iam_role" "dynamo_role" {
-  name = "${var.vendor}-${var.project}-${var.purpose}-iac-dynamo2-role"
+  name = "${var.vendor}-${var.project}-${var.purpose}-iac-dynamo-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
