@@ -1,6 +1,6 @@
 resource "aws_api_gateway_rest_api" "rest_api" {
   name        = "${var.vendor}-${var.project}-${var.purpose}-iac"
-  description = "API Gateway for ${var.workspace}"
+  description = "API Gateway for ${var.purpose}"
   endpoint_configuration {
     types = ["REGIONAL"]
   }
@@ -38,14 +38,14 @@ EOT
 
 resource "aws_api_gateway_resource" "dynamo_resources" {
   for_each    = toset(keys(local.dynamo_function_settings))
-  rest_api_id = aws_api_gateway_rest_api.id
-  parent_id   = aws_api_gateway_rest_api.root_resource_id
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
+  parent_id   = aws_api_gateway_rest_api.rest_api.root_resource_id
   path_part   = each.value
 }
 
 resource "aws_api_gateway_method" "dynamo_methods" {
   for_each    = toset(keys(local.dynamo_function_settings))
-  rest_api_id = aws_api_gateway_rest_api.id
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
   resource_id = aws_api_gateway_resource.dynamo_resources[each.key].id
   http_method = local.dynamo_function_settings[each.key].http_method
   authorization = "NONE"
@@ -53,7 +53,7 @@ resource "aws_api_gateway_method" "dynamo_methods" {
 
 resource "aws_api_gateway_integration" "dynamo_integrations" {
   for_each    = toset(keys(local.dynamo_function_settings))
-  rest_api_id = aws_api_gateway_rest_api.id
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
   resource_id = aws_api_gateway_resource.dynamo_resources[each.key].id
   http_method = local.dynamo_function_settings[each.key].http_method
   integration_http_method = local.dynamo_function_settings[each.key].integration_method
@@ -69,7 +69,7 @@ resource "aws_api_gateway_integration" "dynamo_integrations" {
 
 resource "aws_api_gateway_integration_response" "dynamo_integration_responses" {
   for_each    = toset(keys(local.dynamo_function_settings))
-  rest_api_id = aws_api_gateway_rest_api.id
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
   resource_id = aws_api_gateway_resource.dynamo_resources[each.key].id
   http_method = local.dynamo_function_settings[each.key].http_method
   status_code = "200"
@@ -87,7 +87,7 @@ resource "aws_api_gateway_integration_response" "dynamo_integration_responses" {
 
 resource "aws_api_gateway_deployment" "rest_deployment" {
   depends_on  = [aws_api_gateway_integration.dynamo_integrations, aws_api_gateway_method.dynamo_methods]
-  rest_api_id = aws_api_gateway_rest_api.id
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
   stage_name  = "prod"
   stage_description = "Production Stage"
   description = "Deployment for ${terraform.workspace}"
@@ -117,7 +117,7 @@ resource "aws_iam_role_policy_attachment" "dynamo_policy" {
 
 resource "aws_api_gateway_method_response" "dynamo_method_responses" {
   for_each    = toset(keys(local.dynamo_function_settings))
-  rest_api_id = aws_api_gateway_rest_api.id
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
   resource_id = aws_api_gateway_resource.dynamo_resources[each.key].id
   http_method = local.dynamo_function_settings[each.key].http_method
   status_code = "200"
