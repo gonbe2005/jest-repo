@@ -1,5 +1,5 @@
 resource "aws_api_gateway_rest_api" "sleekscale_api" {
-  name        = "${var.workspace}-sleekscale"
+  name        = "${var.vendor}-${var.project}-${var.purpose}-iac"
   description = "API Gateway for ${var.workspace}"
   endpoint_configuration {
     types = ["REGIONAL"]
@@ -15,7 +15,7 @@ locals {
       "credentials"         = var.dynamo_integration_credentials,
       "request_template"    = <<-EOT
 {
-  "TableName": "${var.workspace}-sleekscale-status",
+  "TableName": "${var.vendor}-${var.project}-${var.purpose}-iac-status",
   "Item": {
     "userId": { "S": $input.json('$.userId') },
     "mDt": { "S": $input.json('$.mDt') },
@@ -94,7 +94,7 @@ resource "aws_api_gateway_deployment" "sleekscale_deployment" {
 }
 
 resource "aws_iam_role" "sleekscale_dynamo_role" {
-  name = "${var.workspace}-sleekscale-dynamo2-role"
+  name = "${var.vendor}-${var.project}-${var.purpose}-iac-dynamo2-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -110,9 +110,9 @@ resource "aws_iam_role" "sleekscale_dynamo_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "sleekscale_dynamo_full_access" {
+resource "aws_iam_role_policy_attachment" "${var.vendor}-${var.project}-${var.purpose}-iac-dynamo-policy" {
   role       = aws_iam_role.sleekscale_dynamo_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+  policy_arn = "arn:aws:iam::${var.account_id}:policy/${var.vendor}-${var.project}-${var.purpose}-iac-dynamo-policy"
 }
 
 resource "aws_api_gateway_method_response" "dynamo_method_responses" {
@@ -128,3 +128,24 @@ resource "aws_api_gateway_method_response" "dynamo_method_responses" {
   depends_on = [aws_api_gateway_method.dynamo_methods]
 }
 
+
+resource "aws_iam_policy" "custom_dynamo_policy" {
+  name        = "${var.vendor}-${var.project}-${var.purpose}-iac-dynamo-policy"
+  description = "Custom policy for DynamoDB access"
+
+  policy = jsonencode({
+    Version   = "2012-10-17",
+    Statement = [
+      {
+        Action   = "dynamodb:*",
+        Resource = "arn:aws:dynamodb:${var.region}:${var.account_id}:table/${var.vendor}-${var.project}-${var.purpose}-iac-status",
+        Effect   = "Allow"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "${var.vendor}-${var.project}-${var.purpose}-iac-dynamo-policy-attachment" {
+  role       = aws_iam_role.sleekscale_dynamo_role.name
+  policy_arn = aws_iam_policy.custom_dynamo_policy.arn
+}

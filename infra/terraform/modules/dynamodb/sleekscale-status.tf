@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "sleekscale_status" {
-  name           = "${var.workspace}-sleekscale-status"
+  name           = "${var.vendor}-${var.project}-${var.purpose}-iac-status"
   billing_mode   = "PROVISIONED"
   read_capacity  = 1
   write_capacity = 1
