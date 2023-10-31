@@ -19,12 +19,6 @@ variable "AWS_SECRET_ACCESS_KEY" {
   default     = ""
 }
 
-variable "region" {
-  description = "AWS Region"
-  type        = string
-  default     = "ap-northeast-3"
-}
-
 variable "api_gateway_id" {
   description = "API Gateway ID"
   type        = string
