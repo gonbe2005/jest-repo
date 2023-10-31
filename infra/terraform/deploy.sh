@@ -21,11 +21,11 @@ if [ $? -ne 0 ]; then
 fi
 
 # Execute terraform plan
-terraform plan \\
-  -var="account_id=$account_id" \\
-  -var="region=$region" \\
-  -var="vendor=$vendor" \\
-  -var="project=$project" \\
+terraform plan \
+  -var="account_id=$account_id" \
+  -var="region=$region" \
+  -var="vendor=$vendor" \
+  -var="project=$project" \
   -var="purpose=$purpose"
 if [ $? -ne 0 ]; then
   echo "Error: terraform plan failed"
@@ -33,12 +33,12 @@ if [ $? -ne 0 ]; then
 fi
 
 # Execute terraform apply
-terraform apply \\
-  -var="account_id=$account_id" \\
-  -var="region=$region" \\
-  -var="vendor=$vendor" \\
-  -var="project=$project" \\
-  -var="purpose=$purpose" \\
+terraform apply \
+  -var="account_id=$account_id" \
+  -var="region=$region" \
+  -var="vendor=$vendor" \
+  -var="project=$project" \
+  -var="purpose=$purpose" \
   -auto-approve
 if [ $? -ne 0 ]; then
   echo "Error: terraform apply failed"
