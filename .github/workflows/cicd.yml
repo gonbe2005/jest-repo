@@ -19,7 +19,7 @@ jobs:
     - name: Run deploy script
       run: |
         cd infra/terraform
-        bash deploy.sh 637190323689 ap-northeast-3 dev
+        bash deploy.sh 637190323689 ap-northeast-3 pct sleekscale dev
 
     - name: Extract API Gateway endpoint URL from terraform.tfstate
       run: |

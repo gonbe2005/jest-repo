@@ -16,6 +16,5 @@ variable "region" {
 # Variable related to the DynamoDB integration
 variable "dynamo_integration_credentials" {
   description = "The ARN of the IAM role for the DynamoDB integration."
-  default     = "arn:aws:iam::637190323689:role/dev-sleekscale-dynamo-role"
   type        = string
 }
