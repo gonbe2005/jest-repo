@@ -1,34 +1,46 @@
 #!/bin/bash
 
-# 引数を取得
+# Retrieve arguments
 account_id=$1
 region=$2
-workspace=$3
+vendor=$3
+project=$4
+purpose=$5
 
-# 入力の確認
-if [ -z "$account_id" ] || [ -z "$region" ] || [ -z "$workspace" ]; then
-  echo "Usage: ./deploy.sh <account_id> <region> <workspace>"
+# Input validation
+if [ -z "$account_id" ] || [ -z "$region" ] || [ -z "$vendor" ] || [ -z "$project" ] || [ -z "$purpose" ]; then
+  echo "Usage: ./deploy.sh <account_id> <region> <vendor> <project> <purpose>"
   exit 1
 fi
 
-# terraform initを実行
+# Execute terraform init
 terraform init
 if [ $? -ne 0 ]; then
   echo "Error: terraform init failed"
   exit 1
 fi
 
-# terraform planを実行
-terraform plan -var="account_id=${account_id}" -var="region=${region}"
+# Execute terraform plan
+terraform plan \\
+  -var="account_id=$account_id" \\
+  -var="region=$region" \\
+  -var="vendor=$vendor" \\
+  -var="project=$project" \\
+  -var="purpose=$purpose"
 if [ $? -ne 0 ]; then
   echo "Error: terraform plan failed"
   exit 1
 fi
 
-# terraform applyを実行
-terraform apply -var="account_id=${account_id}" -var="region=${region}" -var="workspace=${workspace}" -auto-approve
+# Execute terraform apply
+terraform apply \\
+  -var="account_id=$account_id" \\
+  -var="region=$region" \\
+  -var="vendor=$vendor" \\
+  -var="project=$project" \\
+  -var="purpose=$purpose" \\
+  -auto-approve
 if [ $? -ne 0 ]; then
   echo "Error: terraform apply failed"
   exit 1
 fi
-
