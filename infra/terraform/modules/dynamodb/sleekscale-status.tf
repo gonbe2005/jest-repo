@@ -1,4 +1,4 @@
-resource "aws_dynamodb_table" "${var.project}_status" {
+resource "aws_dynamodb_table" "dynamo_status" {
   name           = "${var.vendor}-${var.project}-${var.purpose}-iac-status"
   billing_mode   = "PROVISIONED"
   read_capacity  = 1
