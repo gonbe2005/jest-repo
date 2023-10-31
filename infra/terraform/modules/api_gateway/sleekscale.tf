@@ -110,7 +110,7 @@ resource "aws_iam_role" "dynamo_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "${var.vendor}-${var.project}-${var.purpose}-iac-dynamo-policy" {
+resource "aws_iam_role_policy_attachment" "dynamo_policy" {
   role       = aws_iam_role.dynamo_role.name
   policy_arn = "arn:aws:iam::${var.account_id}:policy/${var.vendor}-${var.project}-${var.purpose}-iac-dynamo-policy"
 }
@@ -145,7 +145,7 @@ resource "aws_iam_policy" "custom_dynamo_policy" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "${var.vendor}-${var.project}-${var.purpose}-iac-dynamo-policy-attachment" {
+resource "aws_iam_role_policy_attachment" "dynamo_policy_attachment" {
   role       = aws_iam_role.dynamo_role.name
   policy_arn = aws_iam_policy.custom_dynamo_policy.arn
 }
